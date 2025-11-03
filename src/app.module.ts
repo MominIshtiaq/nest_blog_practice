@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/user.entity';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -16,10 +16,12 @@ import { User } from './user/user.entity';
         username: 'postgres',
         password: 'postgres',
         database: 'postgres',
-        entities: [User],
+        // entities: [User],
+        autoLoadEntities: true,
         synchronize: true, // only use in development never in production
       }),
     }),
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -17,7 +17,7 @@ export class UserService {
   }
 
   async create(user: CreateUserDto) {
-    const { firstName, lastName, email, gender, password } = user;
+    const { username, email, password } = user;
     //Validate if a user exisit with the given email
     const userDetail = await this.userRepository.findOne({ where: { email } });
 
@@ -31,10 +31,8 @@ export class UserService {
 
     //Create the user
     const newUser = this.userRepository.create({
-      firstName,
-      lastName,
+      username,
       email,
-      gender,
       password,
     });
 
