@@ -13,11 +13,15 @@ export class UserService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: {
+        profile: true
+      }
+    });
   }
 
   async create(user: CreateUserDto) {
-    const { username, email, password } = user;
+    const { email } = user;
     //Validate if a user exisit with the given email
     const userDetail = await this.userRepository.findOne({ where: { email } });
 
@@ -30,13 +34,14 @@ export class UserService {
     }
 
     //Create the user
-    const newUser = this.userRepository.create({
-      username,
-      email,
-      password,
-    });
+    const newUser = this.userRepository.create(user);
 
     // Saving the user to the database
     return await this.userRepository.save(newUser);
+  }
+
+  async delete(id: string) {
+    await this.userRepository.delete({id})
+    return {deleted: true}
   }
 }

@@ -1,8 +1,10 @@
+import { Profile } from 'src/profile/profile.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,7 +12,7 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({
     type: 'varchar',
@@ -43,4 +45,9 @@ export class User {
 
   @DeleteDateColumn()
   deteledAt: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    cascade: ['insert']
+  })
+  profile: Profile
 }

@@ -7,7 +7,7 @@ import {
   IsDate,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateProfileDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString({ message: 'first name must be a string' })
