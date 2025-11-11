@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
+import { TweetModule } from './tweet/tweet.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProfileModule } from './profile/profile.module';
       }),
     }),
     ProfileModule,
+    TweetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,11 @@
 import { Profile } from 'src/profile/profile.entity';
+import { Tweet } from 'src/tweet/tweet.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -47,7 +49,10 @@ export class User {
   deteledAt: Date;
 
   @OneToOne(() => Profile, (profile) => profile.user, {
-    cascade: ['insert']
+    cascade: ['insert'],
   })
-  profile: Profile
+  profile: Profile;
+
+  @OneToMany(() => Tweet, (tweets) => tweets.user)
+  tweets: Tweet[];
 }
