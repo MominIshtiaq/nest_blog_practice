@@ -8,11 +8,14 @@ import { Tweet } from './tweet.entity';
 import { Repository } from 'typeorm';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UserService } from 'src/user/user.service';
+import { HashtagService } from 'src/hashtag/hashtag.service';
+import { UpdateTweetDto } from './dto/update-tweet.dto';
 
 @Injectable()
 export class TweetService {
   constructor(
     private readonly userService: UserService,
+    private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
@@ -29,10 +32,16 @@ export class TweetService {
       });
     }
 
+    //Fetch all the hashtags based on the hashtag array
+    const hashtags = await this.hashtagService.findHashTags(
+      tweet.hashtags || [],
+    );
+
     // Create the Tweet
     const newTweet = this.tweetRepository.create({
       ...tweet,
-      user: user,
+      user,
+      hashtags,
     });
 
     // Save the Tweet
@@ -58,5 +67,28 @@ export class TweetService {
 
     // return all the tweets
     return tweets;
+  }
+
+  public async updateTweet(updateTweet: UpdateTweetDto) {
+    // find the tweet
+    const { id } = updateTweet;
+    const tweet = await this.tweetRepository.findOne({ where: { id } });
+
+    if (!tweet) {
+      throw new NotFoundException({
+        status: 404,
+        message: `Tweet with ${id} not found`,
+      });
+    }
+
+    //  find all hashtags
+    const hashtags = await this.hashtagService.findHashTags(
+      updateTweet.hashtags || [],
+    );
+
+    // Update properties of the tweet
+    tweet.text = updateTweet.text ?? tweet.text;
+    tweet.image = updateTweet.image ?? tweet.image;
+    tweet.hashtags = hashtags;
   }
 }

@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
+import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TweetModule } from './tweet/tweet.module';
     }),
     ProfileModule,
     TweetModule,
+    HashtagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,11 @@
+import { HashTag } from 'src/hashtag/hashtag.entity';
 import { User } from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -33,4 +36,8 @@ export class Tweet {
 
   @ManyToOne(() => User, (user) => user.tweets)
   user: User;
+
+  @ManyToMany(() => HashTag)
+  @JoinTable()
+  hashtags: HashTag[];
 }

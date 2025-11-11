@@ -1,5 +1,5 @@
 import {
-  IsInt,
+  IsArray,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -17,4 +17,9 @@ export class CreateTweetDto {
   @IsNotEmpty()
   @IsUUID()
   userId: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  hashtags?: string[];
 }
