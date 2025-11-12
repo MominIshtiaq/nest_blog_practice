@@ -35,4 +35,9 @@ export class HashtagService {
       });
     }
   }
+
+  async deleteHashTag(id: string) {
+    await this.hashTagRepository.delete({ id });
+    return { deleted: true, id };
+  }
 }

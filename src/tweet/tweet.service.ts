@@ -95,6 +95,9 @@ export class TweetService {
   }
 
   public async deleteTweet(id: string) {
+    // When we have Uni-Directional Many-to-Many relationship.
+    // So when we delete the owning relationship entity (Tweet) the entries in the Bridge table will also be deleted.
+    // (Point to Remember) Tweet is the owning relationship holder/entity because it has JoinTable decorator.
     await this.tweetRepository.delete({ id });
     return { deleted: true, id };
   }
