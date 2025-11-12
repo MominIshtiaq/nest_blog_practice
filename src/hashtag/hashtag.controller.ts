@@ -20,4 +20,9 @@ export class HashtagController {
   public async delete(@Param('id') id: string) {
     return this.hashtagService.deleteHashTag(id);
   }
+
+  @Delete('soft-delete/:id')
+  public async softDelete(@Param('id') id: string) {
+    return this.hashtagService.softDeleteHashTag(id);
+  }
 }

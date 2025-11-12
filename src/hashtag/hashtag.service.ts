@@ -40,4 +40,9 @@ export class HashtagService {
     await this.hashTagRepository.delete({ id });
     return { deleted: true, id };
   }
+
+  async softDeleteHashTag(id: string) {
+    await this.hashTagRepository.softDelete({ id });
+    return { deleted: true, id };
+  }
 }
