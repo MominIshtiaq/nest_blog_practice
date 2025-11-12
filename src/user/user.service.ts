@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ConflictException } from '@nestjs/common';
+import { UserAlreadyExistException } from 'src/exceptions/user-already-exist.exception';
 
 @Injectable()
 export class UserService {
@@ -54,18 +54,26 @@ export class UserService {
 
   async create(user: CreateUserDto) {
     try {
-      const { email } = user;
-      //Validate if a user exisit with the given email
-      const userDetail = await this.userRepository.findOne({
-        where: { email },
+      const { email, username } = user;
+
+      //Validate if a user exist with the given username
+      const existingUserName = await this.userRepository.findOne({
+        where: [{ username }],
       });
 
       // Handle the Error  / Exception
-      if (userDetail) {
-        throw new ConflictException({
-          statusCode: 409,
-          message: 'User already exist',
-        });
+      if (existingUserName) {
+        throw new UserAlreadyExistException('username', username);
+      }
+
+      //Validate if a user exist with the given email
+      const existingUserEmail = await this.userRepository.findOne({
+        where: [{ email }],
+      });
+
+      // Handle the Error  / Exception
+      if (existingUserEmail) {
+        throw new UserAlreadyExistException('email', email);
       }
 
       //Create the user
@@ -81,14 +89,8 @@ export class UserService {
             description: 'Could not connect to the Database',
           },
         );
-      } else if (error.code === '23505') {
-        throw new BadRequestException('Email already exists.');
-      } else if (error instanceof HttpException) {
-        // Rethrow known NestJs HTTP exceptions
-        throw error;
-      } else {
-        console.log(error);
       }
+      throw error;
     }
   }
 
