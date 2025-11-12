@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTweetDto {
   @IsNotEmpty()
@@ -15,7 +9,7 @@ export class CreateTweetDto {
   image?: string;
 
   @IsNotEmpty()
-  @IsUUID()
+  @IsString()
   userId: string;
 
   @IsOptional()

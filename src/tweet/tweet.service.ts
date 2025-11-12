@@ -62,7 +62,7 @@ export class TweetService {
     // get all the tweets
     const tweets = await this.tweetRepository.find({
       where: { user: { id: user.id } },
-      relations: ['user'],
+      relations: ['user', 'hashtags'],
     });
 
     // return all the tweets
@@ -90,5 +90,12 @@ export class TweetService {
     tweet.text = updateTweet.text ?? tweet.text;
     tweet.image = updateTweet.image ?? tweet.image;
     tweet.hashtags = hashtags;
+
+    return await this.tweetRepository.save(tweet);
+  }
+
+  public async deleteTweet(id: string) {
+    await this.tweetRepository.delete({ id });
+    return { deleted: true, id };
   }
 }

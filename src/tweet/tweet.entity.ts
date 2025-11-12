@@ -13,7 +13,7 @@ import {
 
 @Entity()
 export class Tweet {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({
