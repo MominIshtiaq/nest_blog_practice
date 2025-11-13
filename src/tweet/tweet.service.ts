@@ -10,6 +10,7 @@ import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UserService } from 'src/user/user.service';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class TweetService {
@@ -48,7 +49,7 @@ export class TweetService {
     return await this.tweetRepository.save(newTweet);
   }
 
-  public async getUserTweets(id: string) {
+  public async getUserTweets(id: string, pagination: PaginationQueryDto) {
     // check if the user exist
     const user = await this.userService.findOne(id);
 
@@ -59,10 +60,19 @@ export class TweetService {
       });
     }
 
+    const limit = pagination.limit ?? 10;
+    const page = pagination.page ?? 1;
+
     // get all the tweets
     const tweets = await this.tweetRepository.find({
       where: { user: { id: user.id } },
       relations: ['user', 'hashtags'],
+      take: limit,
+      // how will we specify how many records to skip for this we use a formula.
+      // so  for the first page 1
+      // page = 1: (page  - 1) * limit => (1-1)*10 => 0
+      // page = 2: (page - 1) * limit => (2-1)*10 => 10
+      skip: (page - 1) * limit,
     });
 
     // return all the tweets

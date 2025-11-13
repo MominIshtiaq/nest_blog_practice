@@ -6,18 +6,23 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Controller('tweet')
 export class TweetController {
   constructor(private readonly tweetService: TweetService) {}
 
   @Get(':userId')
-  async getUserTweets(@Param('userId') userId: string) {
-    return this.tweetService.getUserTweets(userId);
+  async getUserTweets(
+    @Param('userId') userId: string,
+    @Query() pagination: PaginationQueryDto,
+  ) {
+    return this.tweetService.getUserTweets(userId, pagination);
   }
 
   @Post()
