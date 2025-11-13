@@ -11,7 +11,7 @@ import {
 import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
-import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
 
 @Controller('tweet')
 export class TweetController {
@@ -20,9 +20,9 @@ export class TweetController {
   @Get(':userId')
   async getUserTweets(
     @Param('userId') userId: string,
-    @Query() pagination: PaginationQueryDto,
+    @Query() tweetQuery: GetTweetQueryDto,
   ) {
-    return this.tweetService.getUserTweets(userId, pagination);
+    return this.tweetService.getUserTweets(userId, tweetQuery);
   }
 
   @Post()

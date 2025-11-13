@@ -10,7 +10,7 @@ import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UserService } from 'src/user/user.service';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
-import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
 
 @Injectable()
 export class TweetService {
@@ -49,7 +49,7 @@ export class TweetService {
     return await this.tweetRepository.save(newTweet);
   }
 
-  public async getUserTweets(id: string, pagination: PaginationQueryDto) {
+  public async getUserTweets(id: string, tweetQuery: GetTweetQueryDto) {
     // check if the user exist
     const user = await this.userService.findOne(id);
 
@@ -60,8 +60,8 @@ export class TweetService {
       });
     }
 
-    const limit = pagination.limit ?? 10;
-    const page = pagination.page ?? 1;
+    const limit = tweetQuery.limit ?? 10;
+    const page = tweetQuery.page ?? 1;
 
     // get all the tweets
     const tweets = await this.tweetRepository.find({
