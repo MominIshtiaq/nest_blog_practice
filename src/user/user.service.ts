@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserAlreadyExistException } from 'src/exceptions/user-already-exist.exception';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { Paginated } from 'src/common/pagination/paginated.interface';
 
 @Injectable()
 export class UserService {
@@ -21,11 +22,15 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll(paginationQueryDto: PaginationQueryDto) {
+  async findAll(
+    paginationQueryDto: PaginationQueryDto,
+  ): Promise<Paginated<User>> {
     try {
       return await this.paginationProvider.paginateQuery(
         paginationQueryDto,
         this.userRepository,
+        undefined,
+        ['profile'],
       );
     } catch (error) {
       if (error.code === 'ECONNREFUSED') {
@@ -35,9 +40,9 @@ export class UserService {
             description: 'Could not connect to the Database',
           },
         );
-      } else {
-        console.log(error);
       }
+      console.error(error);
+      throw error;
     }
   }
 

@@ -8,6 +8,7 @@ import {
   ObjectLiteral,
   Repository,
 } from 'typeorm';
+import { Paginated } from './paginated.interface';
 
 @Injectable()
 export class PaginationProvider {
@@ -17,7 +18,8 @@ export class PaginationProvider {
     paginationQueryDto: PaginationQueryDto,
     repository: Repository<T>,
     where?: FindOptionsWhere<T>,
-  ) {
+    relations?: string[],
+  ): Promise<Paginated<T>> {
     const limit = paginationQueryDto.limit ?? 10;
     const page = paginationQueryDto.page ?? 1;
 
@@ -28,6 +30,10 @@ export class PaginationProvider {
 
     if (where) {
       findOptions.where = where;
+    }
+
+    if (relations && relations?.length > 0) {
+      findOptions.relations = relations;
     }
 
     const result = await repository.find(findOptions);
@@ -44,12 +50,35 @@ export class PaginationProvider {
     // First we need to check that if page is equal to one then the user cannot move to any pervious page
     const perivousPage = currentPage === 1 ? currentPage : currentPage - 1;
 
+    // suppose the url is http://localhost:3000/tweet/11?limit=10&page=1
     // this.request.protocol is equal to http or https
     // this.request.hostname is equal to localhost
     // this.request.headers.host is equal to localhost:3000
+    // this.request.url is equal to tweet/11?limit=10&page=1
+
     // baseUrl = http://localhost:3000/
     const baseUrl =
       this.request.protocol + '://' + this.request.headers.host + '/';
+    const newUrl = new URL(this.request.url, baseUrl);
+
+    /*
+    if we console log the newUrl we will get the following object.
+    we will use the origin and pathname to construct the links.
+    newUrl = {
+      href: "http://localhost:3000/tweet/11?limit=10&page=1",
+      origin: "http://localhost:3000",
+      protocol: "http:",
+      username: "",
+      password: "",
+      host: "localhost:3000",
+      hostname: "localhost",
+      port: "3000",
+      pathname: "/tweet/11",
+      search: "?limit=5&page=3",
+      searchParams: URLSearchParams {'limit' => "5", "page" => '3'}
+      hash: ''
+    }
+    */
 
     const response = {
       data: result,
@@ -60,11 +89,11 @@ export class PaginationProvider {
         totalPages,
       },
       links: {
-        page: '',
-        last: '',
-        current: '',
-        next: '',
-        previous: '',
+        first: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=1`,
+        last: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=${totalPages}`,
+        current: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=${currentPage}`,
+        next: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=${nextPage}`,
+        previous: `${newUrl.origin}${newUrl.pathname}?limit=${limit}&page=${perivousPage}`,
       },
     };
 
