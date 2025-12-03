@@ -8,6 +8,7 @@ import { TweetModule } from './tweet/tweet.module';
 import { HashtagModule } from './hashtag/hashtag.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PaginationModule } from './common/pagination/pagination.module';
+import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import envValidation from './config/env.validation';
@@ -41,6 +42,7 @@ const ENV = process.env.NODE_ENV;
     TweetModule,
     HashtagModule,
     PaginationModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
