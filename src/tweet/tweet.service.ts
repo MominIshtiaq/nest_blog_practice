@@ -11,12 +11,14 @@ import { UserService } from 'src/user/user.service';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
+import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 
 @Injectable()
 export class TweetService {
   constructor(
     private readonly userService: UserService,
     private readonly hashtagService: HashtagService,
+    private readonly paginationProvider: PaginationProvider,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
@@ -64,19 +66,26 @@ export class TweetService {
     const page = tweetQuery.page ?? 1;
 
     // get all the tweets
-    const tweets = await this.tweetRepository.find({
-      where: { user: { id: user.id } },
-      relations: ['user', 'hashtags'],
-      take: limit,
-      // how will we specify how many records to skip for this we use a formula.
-      // so  for the first page 1
-      // page = 1: (page  - 1) * limit => (1-1)*10 => 0
-      // page = 2: (page - 1) * limit => (2-1)*10 => 10
-      skip: (page - 1) * limit,
-    });
+    // const tweets = await this.tweetRepository.find({
+    // where: { user: { id: user.id } },
+    // relations: ['user', 'hashtags'],
+    // take: limit,
+    // how will we specify how many records to skip for this we use a formula.
+    // so  for the first page 1
+    // page = 1: (page  - 1) * limit => (1-1)*10 => 0
+    // page = 2: (page - 1) * limit => (2-1)*10 => 10
+    // skip: (page - 1) * limit,
+    // });
 
     // return all the tweets
-    return tweets;
+    // return tweets;
+
+    // using Pagination Provider
+    return await this.paginationProvider.paginateQuery(
+      { limit, page },
+      this.tweetRepository,
+      { user: { id: user.id } },
+    );
   }
 
   public async updateTweet(updateTweet: UpdateTweetDto) {

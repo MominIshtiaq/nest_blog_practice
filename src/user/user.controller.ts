@@ -6,23 +6,23 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll() {
-    return this.userService.findAll();
+  async findAll(@Query() paginationQueryDto: PaginationQueryDto) {
+    return this.userService.findAll(paginationQueryDto);
   }
 
-  @Get()
+  @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }

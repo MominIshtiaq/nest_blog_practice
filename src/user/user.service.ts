@@ -10,21 +10,23 @@ import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserAlreadyExistException } from 'src/exceptions/user-already-exist.exception';
+import { PaginationProvider } from 'src/common/pagination/pagination.provider';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class UserService {
   constructor(
+    private readonly paginationProvider: PaginationProvider,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  async findAll(paginationQueryDto: PaginationQueryDto) {
     try {
-      return await this.userRepository.find({
-        relations: {
-          profile: true,
-        },
-      });
+      return await this.paginationProvider.paginateQuery(
+        paginationQueryDto,
+        this.userRepository,
+      );
     } catch (error) {
       if (error.code === 'ECONNREFUSED') {
         throw new RequestTimeoutException(

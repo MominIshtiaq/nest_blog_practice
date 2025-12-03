@@ -34,10 +34,10 @@ export class Tweet {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.tweets)
+  @ManyToOne(() => User, (user) => user.tweets, { eager: true })
   user: User;
 
-  @ManyToMany(() => HashTag, (hashtags) => hashtags.tweets)
+  @ManyToMany(() => HashTag, (hashtags) => hashtags.tweets, { eager: true })
   @JoinTable()
   hashtags: HashTag[];
 }
