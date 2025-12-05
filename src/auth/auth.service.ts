@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { UserService } from 'src/user/user.service';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,5 +18,9 @@ export class AuthService {
     }
 
     return 'You are logged in';
+  }
+
+  public async signup(user: CreateUserDto) {
+    return await this.userService.create(user);
   }
 }
