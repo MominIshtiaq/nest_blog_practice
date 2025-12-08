@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
-  HttpException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   RequestTimeoutException,
@@ -13,11 +13,15 @@ import { UserAlreadyExistException } from 'src/exceptions/user-already-exist.exc
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { Paginated } from 'src/common/pagination/paginated.interface';
+import { HashingProvider } from 'src/auth/provider/hashing.provider';
 
 @Injectable()
 export class UserService {
   constructor(
+    @Inject(forwardRef(() => HashingProvider))
+    private readonly hashingProvider: HashingProvider,
     private readonly paginationProvider: PaginationProvider,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -89,7 +93,10 @@ export class UserService {
       }
 
       //Create the user
-      const newUser = this.userRepository.create(user);
+      const newUser = this.userRepository.create({
+        ...user,
+        password: await this.hashingProvider.hashPassword(user.password),
+      });
 
       // Saving the user to the database
       return await this.userRepository.save(newUser);
