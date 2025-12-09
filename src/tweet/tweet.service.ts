@@ -13,6 +13,7 @@ import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginated } from 'src/common/pagination/paginated.interface';
+import { ActiveUserType } from 'src/auth/interfaces/active-user-type.interface';
 
 @Injectable()
 export class TweetService {
@@ -24,10 +25,9 @@ export class TweetService {
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
 
-  public async createTweet(tweet: CreateTweetDto) {
+  public async createTweet(tweet: CreateTweetDto, activeUser: ActiveUserType) {
     // Find user with the given userid from the user table
-    const { userId } = tweet;
-    const user = await this.userService.findOne(userId);
+    const user = await this.userService.findOne(activeUser.sub);
 
     if (!user) {
       throw new BadRequestException({

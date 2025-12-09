@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import authConfig from '../config/auth.config';
 import { Reflector } from '@nestjs/core';
+import { REQUEST_USER_KEY } from 'src/constants/constants';
 
 @Injectable()
 export class AuthorizeGuard implements CanActivate {
@@ -79,7 +80,7 @@ export class AuthorizeGuard implements CanActivate {
         this.authConfigurtaion,
       );
 
-      request['user'] = payload;
+      request[REQUEST_USER_KEY] = payload;
 
       return true;
     } catch {

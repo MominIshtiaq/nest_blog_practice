@@ -12,6 +12,7 @@ import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 
 @Controller('tweet')
 export class TweetController {
@@ -26,8 +27,8 @@ export class TweetController {
   }
 
   @Post()
-  async create(@Body() tweet: CreateTweetDto) {
-    return this.tweetService.createTweet(tweet);
+  async create(@Body() tweet: CreateTweetDto, @ActiveUser() user) {
+    return this.tweetService.createTweet(tweet, user);
   }
 
   @Patch()
