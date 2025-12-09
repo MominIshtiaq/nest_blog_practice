@@ -9,19 +9,34 @@ import { type ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import authConfig from '../config/auth.config';
-import { UserService } from 'src/user/user.service';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthorizeGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+
+    // To read isPublic that has been added by the AllowAnonymous decorator we are going to use reflector class instance
+    // This will allow us to read the meta data from the ExecutionContext
+    private readonly reflector: Reflector,
 
     @Inject(authConfig.KEY)
     private readonly authConfigurtaion: ConfigType<typeof authConfig>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Read isPublic Metadata
+    /* 
+    The getAllAndOverride method of reflector takes two parameters
+    first is which property to read (metadataKey (type string)) and second is from where (target (type (Function | Type<any>)[]))
+    */
+    const isPublic = this.reflector.getAllAndOverride('isPublic', [
+      context.getHandler(), // check on handler function like login, signup in auth.controller.ts
+      context.getClass(), // check on class itself like User, Auth etc
+    ]);
+
+    if (isPublic) return true;
+
     //1. extract request from ExecutionContext
     const request: Request = context.switchToHttp().getRequest();
 
@@ -64,14 +79,7 @@ export class AuthorizeGuard implements CanActivate {
         this.authConfigurtaion,
       );
 
-      // verify the user
-      const user = await this.userService.findOne(payload.sub);
-
-      if (!user) {
-        throw new UnauthorizedException();
-      }
-
-      request['user'] = user;
+      request['user'] = payload;
 
       return true;
     } catch {

@@ -13,7 +13,25 @@ import { AuthModule } from 'src/auth/auth.module';
     forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [
+    UserService,
+    /*{ // This guard will be applied globally. This mean all the routes are protected now
+      provide: 'APP_GUARD', // -> This will apply the guard globally. its a good  practice to add them on auth module or app module.
+      useClass: AuthorizeGuard,
+    },*/
+  ],
   exports: [UserService],
 })
 export class UserModule {}
+
+/* 
+To add Module level Guard. We need to take create of two things.
+1. ConfigModule
+2. Register the JwtModule
+
+Then is the providers array create an object
+{
+provide: 'APP_GUARD' // constant to with a unique guard identifier
+useClass: AuthorizeGuard // guard for the moduke level
+}
+*/

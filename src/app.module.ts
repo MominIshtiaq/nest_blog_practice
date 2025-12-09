@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import envValidation from './config/env.validation';
+import authConfig from './auth/config/auth.config';
+import { JwtModule } from '@nestjs/jwt';
 
 const ENV = process.env.NODE_ENV;
 
@@ -43,6 +45,8 @@ const ENV = process.env.NODE_ENV;
     HashtagModule,
     PaginationModule,
     AuthModule,
+    ConfigModule.forFeature(authConfig),
+    JwtModule.registerAsync(authConfig.asProvider()),
   ],
   controllers: [AppController],
   providers: [AppService],

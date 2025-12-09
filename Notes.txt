@@ -1,0 +1,15 @@
+There are four types of Decorators in Nest js.
+
+1. Class Decorators -> e.g: @Controller, @Injectable etc
+@Controller('user')
+export class User {...}
+
+2. Property Decorators -> e.g: @Inject, @InjectRepository
+constructor(
+    @InjectRepository
+    private readonly userRepository: Repository<User>
+) {}
+3. Method Decorators -> e.g: @Get, @Post, @Put, @Delete, @Patch
+4. Parameter Decorators -> @Params, @Body, @Query
+
+Point to remember is that Decorators are just functions

@@ -64,4 +64,8 @@ export class AuthService {
   public async signup(user: CreateUserDto) {
     return await this.userService.create(user);
   }
+
+  public async validUserFromPayload(id: string) {
+    return await this.userService.findOne(id);
+  }
 }
